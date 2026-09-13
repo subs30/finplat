@@ -72,10 +72,15 @@ alembic upgrade head
 ### 5. Run the API
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --port 18000
 ```
 
-Visit http://localhost:8000/docs.
+Port 8000 is deliberately avoided: on WSL2, it falls inside Windows'
+dynamic port-exclusion range (roughly 7901-8000), which can make binds to
+it fail or hang unpredictably — the same issue aiplat hit and documented.
+18000 is outside that range.
+
+Visit http://localhost:18000/docs.
 
 ### 6. Run tests
 
