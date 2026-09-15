@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.config import get_settings
 from app.database import Base
-from app.models import Organization, Trace, User  # noqa: F401
+from app.models import Document, DocumentChunk, Organization, Trace, User  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

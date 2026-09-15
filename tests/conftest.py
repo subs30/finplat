@@ -44,7 +44,21 @@ def _ensure_test_database_exists() -> None:
         maintenance_engine.dispose()
 
 
+def _ensure_pgvector_extension_enabled() -> None:
+    # The dev database gets this via the RAG Alembic migration, but the
+    # test database is built by Base.metadata.create_all() below, not
+    # alembic — so document_chunks.embedding's Vector(384) column needs the
+    # extension enabled here explicitly, once, before create_all runs.
+    test_engine = create_engine(_test_url, isolation_level="AUTOCOMMIT")
+    try:
+        with test_engine.connect() as conn:
+            conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+    finally:
+        test_engine.dispose()
+
+
 _ensure_test_database_exists()
+_ensure_pgvector_extension_enabled()
 engine = create_engine(_test_url)
 
 
