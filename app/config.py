@@ -49,6 +49,16 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str | None = None
     GROQ_MODEL: str = "openai/gpt-oss-20b"
 
+    # Neo4j (V0.3 graph detection). Required only by the graph
+    # ingestion/query paths, not app startup as a whole — same "optional,
+    # fails clean" contract as the gateway keys above. NEO4J_URI defaults
+    # to the local install's Bolt port; NEO4J_PASSWORD has no default since
+    # there is no safe default password to ship.
+    NEO4J_URI: str = "bolt://localhost:7687"
+    NEO4J_USER: str = "neo4j"
+    NEO4J_PASSWORD: str | None = None
+    NEO4J_DATABASE: str = "neo4j"
+
 
 @lru_cache
 def get_settings() -> Settings:

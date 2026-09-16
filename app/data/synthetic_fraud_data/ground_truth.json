@@ -1,0 +1,614 @@
+{
+  "organization_id": "93614a58-9b1b-419f-ae83-6e99b3d2752f",
+  "generated_at": "2026-09-16T14:41:42.120292+00:00",
+  "seed": 42,
+  "counts": {
+    "entities": 184,
+    "accounts": 184,
+    "transactions": 1140,
+    "background_accounts": 150
+  },
+  "patterns": [
+    {
+      "pattern_type": "clean",
+      "case_id": "clean-control-1",
+      "description": "Regular biweekly payroll deposit with steady, modest spending \u2014 a deliberate negative control, not expected to be flagged by any detection method.",
+      "entities": [
+        {
+          "entity_id": "b6e4cb05-49b7-4aea-8912-7e84359d8b23",
+          "role": "clean_control"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "ef24a703-2772-4e72-a7e3-e54cc6b2920f",
+          "role": "clean_control"
+        }
+      ],
+      "transactions": [
+        "ab71a610-e9e9-4e06-849d-efafe8ee233e",
+        "52ba98e7-c6b9-4f2c-937f-162095f47c28",
+        "83ce7624-c003-4392-9a60-c7979627fe3f",
+        "da0783c5-64a8-4e09-a00b-26499242f5f6",
+        "a48eafb0-8f22-4772-9313-21ef655f07e2",
+        "97fdd2c1-90c2-4551-8997-f48015df94b5",
+        "cd7efb15-0743-4917-a9b2-9620d0237ce7",
+        "97bc9109-1de0-4412-8dba-29d22e9c298c",
+        "4f36874a-9818-4ec4-a66a-35c5b1355b02",
+        "da54a0cf-07b0-4ff6-8968-e0c86526d120",
+        "71b1d8af-07de-47ff-90ca-aaad68d715d0",
+        "4ef8087f-43c0-47fd-8f18-a8d2782102c1",
+        "0996134a-8dea-4b87-8397-d1331a3e51ff",
+        "cfdcb231-1c41-4291-ab57-2bf027dab410",
+        "660dfb7c-eb7a-43db-b9e8-d8f161a8240d",
+        "9dd4b2eb-5593-4174-8bbe-5fc38912b6e6",
+        "efda645d-90ce-465a-924c-4807809400ea",
+        "e7f49686-c37c-4b3f-9457-4d66bc12afa7",
+        "949fa76d-f0e7-4f15-8c6e-81fa9286c754",
+        "293691c8-0369-4d35-90e7-fb6783f9059b",
+        "15ea8b50-b58a-4cba-9f2d-a5e4df360fbd",
+        "9d93d5bb-bef3-4efd-a468-5d63bf51ab67",
+        "160bf24f-1e8c-4ddd-89d2-4cf4454befa9",
+        "506ff7a4-01ef-434c-9c0e-7581c56fadc6",
+        "690fcc14-8fb4-4aab-90aa-3daa5d66ca1c",
+        "73006f99-263b-433f-a79e-193cc451b009",
+        "8a689b39-c84f-4324-ac1a-6d8030da2753",
+        "71f3b24b-4a36-4f02-a444-43e90a620df7",
+        "1f4d7b7c-3cf8-447a-a441-4fa372e7adc3",
+        "d5534662-8908-4788-b3f3-96490bec1048",
+        "93df0187-4f14-4e83-80c5-28e1f92a620e",
+        "988bdd2a-20a6-4704-b092-561eebe206c1",
+        "d2abe333-a078-4637-a2f7-3afb5958b93d"
+      ]
+    },
+    {
+      "pattern_type": "clean",
+      "case_id": "clean-control-2",
+      "description": "Regular biweekly payroll deposit with steady, modest spending \u2014 a deliberate negative control, not expected to be flagged by any detection method.",
+      "entities": [
+        {
+          "entity_id": "be28f511-96e8-4027-804b-ca52d22f3f66",
+          "role": "clean_control"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "0dd9c6df-76c0-485d-84cf-9a971c0f86da",
+          "role": "clean_control"
+        }
+      ],
+      "transactions": [
+        "fc4991bf-b045-462b-aa36-ae0cc33b1eaf",
+        "526ec06f-044e-464c-b525-8327bb1b35cb",
+        "1ecc381a-c305-4105-acef-306e77c4388e",
+        "ced2f72b-fb69-407c-b7ea-dcfcc2e298dd",
+        "2136c892-f0ac-4b40-aa8e-98f72a94c9a6",
+        "c38311b3-407f-45a1-bda9-531a4754b75d",
+        "9c794142-d89c-49c7-93c2-aedfd30a07c5",
+        "d6ba4f28-ab79-4b8b-8862-16da7bbc96a0",
+        "a36b97d3-257b-4060-9be3-bfcd28cdd6bd",
+        "16f98058-60cf-4ee3-aad9-dffa7a6e2b02",
+        "2dc0098f-4fa1-419e-bd1b-f37d1a6fe23a",
+        "76d09694-dcd8-463c-b1bd-5ce5c705e94f",
+        "143210b0-74e6-4276-8fb3-4f0612c4a345",
+        "4ce4eb72-f955-4f39-ad0d-2819d194d46c",
+        "8cacee1e-677a-48c3-a589-704397f79590",
+        "955a0e01-8b1d-4c63-ade9-155916a59b7e",
+        "5b85083c-c5cd-48de-a905-35b1421421c7",
+        "cf18a54c-4670-45ad-8cfa-9bf09ebfeb61",
+        "455aad6f-65c9-4dd2-b13f-cb8c7234bea2",
+        "594e6d03-51c8-4974-8bea-5c32382f75df",
+        "5ceaa0b7-2ee9-4219-b85d-5e96356c0400",
+        "c7cca3c9-7ed3-4bc5-86f5-574f2bbbb2f6",
+        "9559dc85-bb8c-4429-ac63-09b732eefdb3",
+        "9b047cb7-4acf-4454-a2a3-10adcbe651b6",
+        "2ca46dd3-a457-41f4-8aad-5d4ef6aef2ae",
+        "2d800aff-34c2-42b0-9225-a47ba6109f7e",
+        "60a70a08-6ffd-4234-9dbc-ac6cfdada424",
+        "0029a44d-193e-4bb7-a6c8-1e8b1722cfeb",
+        "818785e0-b33e-4389-8e5a-429054131772",
+        "ddeb2a97-4cc7-46b0-9fc4-9a946a12ff67",
+        "e318d8e0-9e87-4418-8834-1ab2de3f92aa"
+      ]
+    },
+    {
+      "pattern_type": "clean",
+      "case_id": "clean-control-3",
+      "description": "Regular biweekly payroll deposit with steady, modest spending \u2014 a deliberate negative control, not expected to be flagged by any detection method.",
+      "entities": [
+        {
+          "entity_id": "d440ca79-d236-4766-8fb8-92cf26d2e8b8",
+          "role": "clean_control"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "2dbc392e-4882-495a-8789-964a06470056",
+          "role": "clean_control"
+        }
+      ],
+      "transactions": [
+        "ff759da6-cc97-4c71-824c-420ce960d1c0",
+        "39a9c899-872a-4f30-8cd7-5ccf5dd80a88",
+        "d5a1cdc6-6b94-48b1-9fe7-7980b9098c81",
+        "f57105c6-d165-4523-b775-4cb5ae3bbd0e",
+        "6d7305bc-7aaf-413f-8025-46fa79b358f6",
+        "720bcf81-2d87-469e-ae24-5a950af5efe8",
+        "2eb69adb-f587-4d78-b239-509954f48dbe",
+        "d855542d-56ae-42f3-a78c-03fa3bd8b7ef",
+        "f8460267-6397-49d9-a7eb-7a735815a0c0",
+        "991bd1a5-f375-4f91-8772-df373fcf62ad",
+        "0f53be6f-257a-4e03-83db-993218361fee",
+        "7a97eadc-7062-4043-b91c-ad7168d79906",
+        "4080d883-12e9-44ac-a863-06e98f5b68cd",
+        "5d4f5d4d-92fd-46a1-87c0-7e5e6531c1d7",
+        "a5bdb40c-ca24-4408-9b68-590021306bee",
+        "c92bdde0-b077-4419-8d34-37424e5bff35",
+        "24423dbd-cf08-4419-803a-7fa93c5c6b5c",
+        "f22b3d85-1613-4fdf-9305-23d4112cce00",
+        "96247d01-3197-4b0c-bf53-c5d8ed281685",
+        "7cd32e97-86f4-49dc-9334-7af0ebc578b2",
+        "4fdf9815-6570-4624-99ce-ff27e6561f23",
+        "30883534-27ee-4a2c-bac7-63ca127dcf21",
+        "e499a00a-5d6a-4320-8c0d-665fd293c8a2",
+        "90229517-03b4-442a-ad88-617ea8cd43cc",
+        "1d2efb00-271d-4814-b5ef-47ef47b1119a",
+        "31ca261e-50d8-4658-9871-7ae0b7b41d6c",
+        "22647153-3858-40cd-9f55-04f9e3a7523d",
+        "a40e2420-5c20-469f-be72-9b00ffd5dd4a",
+        "f7011a2c-2977-4b5e-b477-d25aab20ecc9",
+        "8b2195e4-7ca3-4b8f-90cc-82f4e4b08d47",
+        "ba0357c1-1a1f-4a23-83f4-cdd231707d6c",
+        "bcbd04f2-5352-456e-a6cf-46bd76d4c694",
+        "b86f8c9a-9962-480d-bb8d-322649122294",
+        "92346c43-bb94-4f2d-9dd7-3385dfbb62f8",
+        "f027bf22-9aff-4e50-96ca-470166dd5956",
+        "45ca4537-3ffa-4bd6-bade-be4f3882580c",
+        "899a0769-fadc-439d-bc42-272546de0a9e"
+      ]
+    },
+    {
+      "pattern_type": "clean",
+      "case_id": "clean-control-4",
+      "description": "Regular biweekly payroll deposit with steady, modest spending \u2014 a deliberate negative control, not expected to be flagged by any detection method.",
+      "entities": [
+        {
+          "entity_id": "30a8f39e-90d9-4a62-946d-47e925b05153",
+          "role": "clean_control"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "c7136881-b322-4e55-af7d-b6e8e8b1d12e",
+          "role": "clean_control"
+        }
+      ],
+      "transactions": [
+        "0b07b23e-d1d3-429b-b416-26a96518cffe",
+        "910311b4-31db-4c9f-b425-1657dd4f73d9",
+        "23f46ac9-0a85-4b02-8d3b-1c1071900f52",
+        "1550c73c-3576-4495-ad8a-ea8993277d49",
+        "53d411df-7192-4dd0-984c-291de1836a41",
+        "9c97ed5f-b125-4151-bf0a-f695ede075ad",
+        "97f6726d-d5ef-4c37-8c39-f7ce5dd12236",
+        "a581d4c1-d625-4428-9cc5-a8e03e478949",
+        "b5478b91-791d-4aca-8af7-db6bd6d695b7",
+        "0978cc18-9ab2-490d-9c66-e9bc992cd19d",
+        "2bca1f72-f8da-4a6c-bc00-946829bccd0b",
+        "988f7934-28e8-45b9-b0f4-a56f5e197228",
+        "21b8054a-53a2-4da2-8078-e32c379b3a20",
+        "5321659d-3711-4536-ae3e-2facec901660",
+        "b98101c8-19f7-4949-b59d-24fb20379f28",
+        "85e28fe7-4628-4bb6-8ace-e1ff7a2edac5",
+        "9425a35d-8194-4697-8e0b-f581634fee2b",
+        "b969562e-2d1a-4165-975c-1736d8578593",
+        "a26b90b3-ab56-43e4-9abb-023b5ad64cc9",
+        "e5adbe9c-fc9e-43f1-a724-0c2e5cb04b0d",
+        "2c84d446-a4c5-46dd-9c79-28962425f659",
+        "51beb08a-b1ea-4c0d-b861-b67e734bf330",
+        "19e932b2-7ffe-41d5-816f-6a24aa6f4704",
+        "2ac7567f-2143-49db-9b5c-665a79ba7eb3",
+        "4c8f20ac-d4de-4627-81e5-5981877984de",
+        "97e82651-4034-4089-9ed3-6f7d5fe7dadf",
+        "05075abb-0e67-402e-a908-991f094e537e"
+      ]
+    },
+    {
+      "pattern_type": "clean",
+      "case_id": "clean-control-5",
+      "description": "Regular biweekly payroll deposit with steady, modest spending \u2014 a deliberate negative control, not expected to be flagged by any detection method.",
+      "entities": [
+        {
+          "entity_id": "57d9ac73-79e5-41f3-8dd7-e6b3dfd2768a",
+          "role": "clean_control"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "2ea828f5-7067-4c4a-a298-3c373d9991ba",
+          "role": "clean_control"
+        }
+      ],
+      "transactions": [
+        "f594abab-1a68-43e0-9887-c96a26f13111",
+        "47d4d6c5-6e5d-4574-99c5-4aa607309272",
+        "b692a378-6fdf-4ccf-8c18-452a9c96695c",
+        "a74513ca-b4b1-49a2-a1cc-aebddcd30418",
+        "b3a0d627-d707-4957-96e6-da613b3b6e43",
+        "fe1cf5b1-3e07-454d-b4d7-6e6c818bf0ba",
+        "0a11a4fa-66d5-4135-9367-cd503bb0def7",
+        "7ae11969-03d7-420d-9881-1c97f9d64aea",
+        "69410f66-baa8-4159-8996-b676b33b79fa",
+        "c8550f93-ab6f-4a1b-bd0e-c45ac29b9fd9",
+        "f32c43d8-c77d-435c-add6-a9e805921f94",
+        "85415840-5592-423b-ad67-9f7c86797c68",
+        "a0ebf7d1-69d3-4ab6-b1c7-6ca7fafc04bd",
+        "f6b17999-7b29-478d-b285-d87d90355728",
+        "fdb7539f-a85c-408d-ab80-7d48f6078efe",
+        "8f4dcce6-9aeb-4c1d-94b8-9cc0f45bf024",
+        "4f97b5e7-9523-4dad-b082-71d800c7f5e2",
+        "d09dd9aa-3cac-496b-b1ad-f0acd2b65012",
+        "8faa5d3b-3f7a-40ea-a366-9373b7be604b",
+        "bd6164b4-8a87-4684-87e3-ae5844567ebd",
+        "cb0a0f5d-8b5d-4db4-b29a-8c7ca149c091",
+        "001d5672-876d-44da-b907-fa0cb522dcf8",
+        "d2c88663-9fc2-4b36-bd84-97a6677fb73f",
+        "c3708cff-d4e7-48f6-bbc0-37c5c245a768",
+        "92344dbc-8ad7-401b-9d92-e2f6286c223a",
+        "00fca2e2-91a5-4951-ae1e-3224838189a4",
+        "8c2c8f5f-2d5d-456d-a609-c037095a1ad8",
+        "ad737642-5198-4ae9-b985-94eb12d9a020",
+        "0bc695f0-696e-4a40-bd26-09397e982f88",
+        "1869695f-6c0c-465c-8d62-5727b65da71d",
+        "e48b3598-364e-4e8a-a410-019f0477955f",
+        "9ad5403f-643e-40d7-9b82-d9dc63ce4e7b",
+        "a8d13ede-ba64-46ad-92f5-ddeb7fcfde94"
+      ]
+    },
+    {
+      "pattern_type": "structuring",
+      "case_id": "structuring-1",
+      "description": "4 cash deposits of $8,500-$9,800 each, all under the $10000 reporting threshold, made across multiple branches/ATMs within 10 days.",
+      "entities": [
+        {
+          "entity_id": "1efedc34-3d93-433f-af90-d6b10861ed2d",
+          "role": "structurer"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "5fe9bdc9-45a6-4ec9-a8cc-9db8d34e329f",
+          "role": "structurer"
+        }
+      ],
+      "transactions": [
+        "7fab2b7d-d322-40aa-bd3b-0e79e7b8028e",
+        "635cd8a2-cbe3-4463-9f85-fc3f0bfcecc0",
+        "8851bd06-4d2e-4209-8b38-c65a12546e12",
+        "b1b90e7e-e16e-4527-8a04-26f4d5d2a8f2"
+      ]
+    },
+    {
+      "pattern_type": "structuring",
+      "case_id": "structuring-2",
+      "description": "5 cash deposits of $8,500-$9,800 each, all under the $10000 reporting threshold, made across multiple branches/ATMs within 10 days.",
+      "entities": [
+        {
+          "entity_id": "2803f184-8f9d-4f77-88b5-88a391bd8ab4",
+          "role": "structurer"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "55de3cbf-4dcd-4a5e-869d-9de6e4b285c6",
+          "role": "structurer"
+        }
+      ],
+      "transactions": [
+        "12ac851e-296d-4a13-8609-f3c6f6fadafb",
+        "995c40f7-a8f1-4d22-b891-71a6dde91513",
+        "fc9f7359-ff20-4e4a-a6b9-021c0e3b29f5",
+        "a4dab9a7-ff5d-4082-b282-569f700f72e3",
+        "a850e885-f862-4e0e-a2af-1336f85ad948"
+      ]
+    },
+    {
+      "pattern_type": "structuring",
+      "case_id": "structuring-3",
+      "description": "4 cash deposits of $8,500-$9,800 each, all under the $10000 reporting threshold, made across multiple branches/ATMs within 10 days.",
+      "entities": [
+        {
+          "entity_id": "8d3919a1-6002-40a0-b18e-d42caa8e82fe",
+          "role": "structurer"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "8cde516e-2e78-4b32-8196-f058230890cf",
+          "role": "structurer"
+        }
+      ],
+      "transactions": [
+        "f7ef1b05-232e-4e38-bcf3-d748e7e564e0",
+        "e1ea8696-1497-4025-9d79-95a9477d55fa",
+        "787486a4-d9c1-4b1d-a6cb-68c07a0263b3",
+        "567940f9-73af-417a-aa52-0cfeab310bf7"
+      ]
+    },
+    {
+      "pattern_type": "mule_network",
+      "case_id": "mule-network-1",
+      "description": "6 distinct source accounts each send one transfer into a single mule account within 72h; the mule forwards the bulk of the funds onward to one destination account shortly after. Mule and destination entities share a phone number (same controller, different identities). Victim accounts are NOT expected to be flagged \u2014 only mule and destination are.",
+      "entities": [
+        {
+          "entity_id": "1f7593a1-208d-41ca-af36-f7dda3d5eab7",
+          "role": "mule"
+        },
+        {
+          "entity_id": "d64e096c-dac8-4b60-bf9d-43e26b20ec1d",
+          "role": "destination"
+        },
+        {
+          "entity_id": "a887ca0d-fe88-42c4-a766-bcfe65b4e14f",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "77206edc-ff73-48ef-8f2c-801a03422ab5",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "35c6171f-e35a-488d-8ca8-7ca97f0cde70",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "1cab6804-1c82-4e46-952a-99fec2499469",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "b226b9b5-0549-482f-82b1-e4753678e5c2",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "d63b0206-ebd1-4870-8855-e688cc5bb48c",
+          "role": "victim_source"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "01b4db19-eeac-4a59-9bed-f4ef62fbf5b9",
+          "role": "mule"
+        },
+        {
+          "account_id": "ff4dd12f-223b-4050-bef3-776657f96396",
+          "role": "destination"
+        },
+        {
+          "account_id": "9d543d7d-4d0f-4492-8f8b-3e17145cee7a",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "8440f18d-e9cb-4f4f-a866-6ee4e5d77c76",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "59b5e729-4b70-4267-b749-a7abd2381245",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "9b6ac9a8-07ee-4bac-bc03-c473361b6f61",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "0e658cac-db93-47d2-ab1e-89e4e452289d",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "35bdf976-6880-4486-a930-2eb56a1959f4",
+          "role": "victim_source"
+        }
+      ],
+      "transactions": [
+        "b7bca812-d9f6-4794-a459-2c2e27f8e016",
+        "6b66e254-16d7-40d2-b0d7-7713fd9c568c",
+        "3c5066e7-6800-4553-95aa-63b7ffe2083c",
+        "0da16b83-13b5-43af-b791-cf1639e10f85",
+        "b2881aa9-ecd6-4774-a261-0de3de699d32",
+        "d286786f-df4c-4991-bdeb-73d5425c41dc",
+        "12c1e332-292f-4f0c-84ef-822046e613b5"
+      ]
+    },
+    {
+      "pattern_type": "mule_network",
+      "case_id": "mule-network-2",
+      "description": "6 distinct source accounts each send one transfer into a single mule account within 72h; the mule forwards the bulk of the funds onward to one destination account shortly after. Mule and destination entities share a phone number (same controller, different identities). Victim accounts are NOT expected to be flagged \u2014 only mule and destination are.",
+      "entities": [
+        {
+          "entity_id": "1de65395-72b3-4c1a-82d5-f17ccfc6868c",
+          "role": "mule"
+        },
+        {
+          "entity_id": "095e7dc1-87cb-4ccc-aab9-e66d263a504f",
+          "role": "destination"
+        },
+        {
+          "entity_id": "25f2506f-47f5-4c22-b18e-b0d6b3ca699c",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "1520a7c7-2ecc-4417-841a-2c25d0760957",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "8a8d2cbc-77d1-4fda-9702-92975343ffcc",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "acea0c45-8740-47a7-86fd-7227bbb50ac8",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "90701b97-25f9-4a28-ba92-d034f92f4179",
+          "role": "victim_source"
+        },
+        {
+          "entity_id": "8ac0ed3f-a1b7-4d35-9147-7124a16cc056",
+          "role": "victim_source"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "4a87a10c-8445-4835-a07f-647ff1245a06",
+          "role": "mule"
+        },
+        {
+          "account_id": "74244584-76df-4bcc-b6fa-546bd0777b1d",
+          "role": "destination"
+        },
+        {
+          "account_id": "7013d3a6-e264-46c3-bc08-cea231f86228",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "3556ca71-851d-4d29-bf1e-e914294edc57",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "262a91ad-95db-4d73-bd7e-e20aa93045b7",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "3c38c26f-24c7-4011-b94f-fd42b7956002",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "15848b90-ff51-48cd-8ba0-f0e6b9211002",
+          "role": "victim_source"
+        },
+        {
+          "account_id": "e914efa7-16b5-46e7-b946-12cdd4e65b26",
+          "role": "victim_source"
+        }
+      ],
+      "transactions": [
+        "9ed5adf4-5dd3-42d7-a9d0-cfe7ce22053d",
+        "8f70a53f-d532-4fe8-af26-83c7aeabd9a2",
+        "804b24b9-c889-43a4-acfc-023073f5b7f1",
+        "c7cfa0a1-e2ef-4f78-b1b3-0ba341fa84a4",
+        "3bee6674-6141-4d74-a30c-5c0ef01bea57",
+        "c2d3e9c1-6834-45b4-b8cd-8942a4dd4db8",
+        "bd09cd69-8d65-4423-a5f8-b98d33799e92",
+        "666458c5-9b45-43ce-a710-d6f0abced71d"
+      ]
+    },
+    {
+      "pattern_type": "layering",
+      "case_id": "layering-1",
+      "description": "A chain of 5 accounts, each forwarding ~90-97% of a large received sum (starting ~$40,329 range) to the next within 6-48h of receipt \u2014 rapid pass-through with minimal retained balance at each hop.",
+      "entities": [
+        {
+          "entity_id": "2951f9ee-cf60-4a65-87f0-e123f39be14b",
+          "role": "origin"
+        },
+        {
+          "entity_id": "a1b2a9e8-264a-4950-8205-719d105c4a68",
+          "role": "intermediary_1"
+        },
+        {
+          "entity_id": "9286da4c-358b-4d00-917a-d7be43608bf3",
+          "role": "intermediary_2"
+        },
+        {
+          "entity_id": "ffa60db4-5e8f-4afa-b582-3116f941f726",
+          "role": "intermediary_3"
+        },
+        {
+          "entity_id": "dd64c3ef-d587-49ea-b149-f2d88480a986",
+          "role": "destination"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "f1c3faa0-8912-4de7-a4bb-10560e7367b1",
+          "role": "origin"
+        },
+        {
+          "account_id": "c8f3eab0-1dcb-44a4-998e-ec02bad9ee41",
+          "role": "intermediary_1"
+        },
+        {
+          "account_id": "1b06b491-73cb-49cd-991b-ed3d28521984",
+          "role": "intermediary_2"
+        },
+        {
+          "account_id": "69fcc0ee-ef52-46dd-bbc9-1d84c5d92da3",
+          "role": "intermediary_3"
+        },
+        {
+          "account_id": "74bf09be-d2e5-4631-8487-fa1213caa6a5",
+          "role": "destination"
+        }
+      ],
+      "transactions": [
+        "cbdf51c7-8d17-4abc-ae07-75aa33dd87ef",
+        "c8672b43-d3d6-4108-b366-e094a852c64c",
+        "7d499e09-eaac-4210-b467-7d0ae5fabacc",
+        "bdd30cdc-87c6-40b2-906b-dbab2136c7b2"
+      ]
+    },
+    {
+      "pattern_type": "layering",
+      "case_id": "layering-2",
+      "description": "A chain of 5 accounts, each forwarding ~90-97% of a large received sum (starting ~$31,790 range) to the next within 6-48h of receipt \u2014 rapid pass-through with minimal retained balance at each hop.",
+      "entities": [
+        {
+          "entity_id": "a3274115-4da3-4482-81f4-b5337c818aaa",
+          "role": "origin"
+        },
+        {
+          "entity_id": "c8e6f99a-9ddf-40d8-ac42-c5cd0a7b4699",
+          "role": "intermediary_1"
+        },
+        {
+          "entity_id": "a12d7577-72b6-4264-a3a7-231fcd29f582",
+          "role": "intermediary_2"
+        },
+        {
+          "entity_id": "13247cd0-00c7-46f1-91de-cba9354887ab",
+          "role": "intermediary_3"
+        },
+        {
+          "entity_id": "1abad45a-2eba-407a-9f32-9346ee86cee9",
+          "role": "destination"
+        }
+      ],
+      "accounts": [
+        {
+          "account_id": "845087ee-a72e-4114-a4a3-5d9853bc89d1",
+          "role": "origin"
+        },
+        {
+          "account_id": "9f4b7bf2-9b65-4665-a261-9a3cbd2252fc",
+          "role": "intermediary_1"
+        },
+        {
+          "account_id": "56c0d2df-fb01-4405-be03-75456b46e47a",
+          "role": "intermediary_2"
+        },
+        {
+          "account_id": "fbc3e964-6c50-4d3a-97cf-614b356a2136",
+          "role": "intermediary_3"
+        },
+        {
+          "account_id": "c82df1bd-67f6-4dec-ac84-af2fa49bc050",
+          "role": "destination"
+        }
+      ],
+      "transactions": [
+        "59af8f1e-73d3-4c97-9bfc-7b7fd83712f1",
+        "4ba97b30-3a87-4d2c-8e59-1478ec4b0b43",
+        "d3003ad6-6096-4289-b52c-007830559423",
+        "47fc3e41-9b6a-4ad6-9855-b066494eef9e"
+      ]
+    }
+  ]
+}

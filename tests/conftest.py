@@ -109,3 +109,42 @@ def unique_email():
         return f"{prefix}-{uuid.uuid4().hex[:8]}@example.com"
 
     return _make
+
+
+@pytest.fixture
+def neo4j_driver():
+    # get_neo4j_driver() is @lru_cache'd in app code — a single driver
+    # reused for the process's lifetime, which is correct for a running
+    # server but means every test (and app.routers.detection, which calls
+    # it directly rather than through a per-request Depends()) gets back
+    # the SAME instance. Do NOT close it here: closing a cached singleton
+    # after one test leaves every later test holding a dead driver
+    # ("DriverError: Driver closed") since lru_cache would keep handing
+    # out that same closed object. The driver's connections are pooled and
+    # safely reusable across tests; nothing here needs per-test teardown.
+    from app.graph.dependency import get_neo4j_driver
+
+    return get_neo4j_driver()
+
+
+@pytest.fixture
+def neo4j_cleanup(neo4j_driver):
+    """Yields a function tests call with the REAL organization_id they
+    registered via Postgres (`client.post("/auth/register", ...)`) once
+    they know it, so teardown deletes exactly that org's Neo4j nodes.
+    A fixture can't pre-generate the org_id itself here, since it must
+    match an actual `organizations` row the test's Postgres fixtures were
+    built against — Neo4j nodes reference that id but there's no
+    cross-database FK forcing the two to agree, so the test is
+    responsible for registering the id it actually used.
+    """
+    org_ids: list[str] = []
+    try:
+        yield lambda organization_id: org_ids.append(str(organization_id))
+    finally:
+        if org_ids:
+            with neo4j_driver.session(database="neo4j") as session:
+                session.run(
+                    "MATCH (n) WHERE n.organization_id IN $org_ids DETACH DELETE n",
+                    org_ids=org_ids,
+                )

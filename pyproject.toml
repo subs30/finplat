@@ -20,6 +20,10 @@ dependencies = [
     "openai>=1.50",
     "pgvector>=0.3",
     "sentence-transformers>=3.0",
+    "neo4j>=5.20",
+    "xgboost>=2.0",
+    "scikit-learn>=1.4",
+    "pandas>=2.0",
 ]
 
 [project.optional-dependencies]
