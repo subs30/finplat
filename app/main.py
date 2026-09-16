@@ -2,11 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.routers import ai, auth, detection, documents, rag, users
+from app.routers import ai, auth, detection, documents, investigations, rag, users
 
 app = FastAPI(
     title="finplat — AI Financial Crime Intelligence & Investigation Platform",
-    version="0.3.0",
+    version="0.4.0",
 )
 
 # No frontend exists yet in V0.1; FRONTEND_ORIGIN lets a future one be
@@ -29,6 +29,7 @@ app.include_router(ai.router)
 app.include_router(documents.router)
 app.include_router(rag.router)
 app.include_router(detection.router)
+app.include_router(investigations.router)
 
 
 @app.get("/health")
