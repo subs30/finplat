@@ -23,7 +23,7 @@ from app.mcp import tools
 from app.rag.dependency import get_embedding_provider
 
 
-def build_mcp_server(db: Session, organization_id: uuid.UUID) -> FastMCP:
+def build_mcp_server(db: Session, organization_id: uuid.UUID, thread_id: str) -> FastMCP:
     server = FastMCP("finplat-investigation")
 
     @server.tool(description="Fetch one transaction's full detail by id.")
@@ -82,10 +82,16 @@ def build_mcp_server(db: Session, organization_id: uuid.UUID) -> FastMCP:
     def create_case(
         account_id: str,
         title: str,
-        thread_id: str,
         opened_by_user_id: str | None = None,
         summary: str | None = None,
     ) -> dict:
+        # thread_id is bound to THIS investigation's real LangGraph
+        # checkpoint thread — never an LLM-supplied argument. It exists
+        # so Case.thread_id genuinely links back to this conversation's
+        # full trace; letting the model invent its own string here would
+        # silently break that link (found exactly this bug during Step 4
+        # development — the model passed a made-up thread_id that matched
+        # no real checkpoint).
         return tools.create_case(
             db,
             organization_id,

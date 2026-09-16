@@ -47,7 +47,7 @@ async def test_list_tools_exposes_all_eight_tools_with_no_organization_id_parame
     client, db_session, unique_email
 ):
     org_id = _register_org(client, unique_email)
-    server = build_mcp_server(db_session, org_id)
+    server = build_mcp_server(db_session, org_id, str(uuid.uuid4()))
 
     async with create_connected_server_and_client_session(server._mcp_server) as session:
         result = await session.list_tools()
@@ -74,6 +74,14 @@ async def test_list_tools_exposes_all_eight_tools_with_no_organization_id_parame
         assert "organization_id" not in properties, f"{tool.name} leaks organization_id in its schema"
         assert "db" not in properties, f"{tool.name} leaks db in its schema"
 
+    # Same property, specifically for thread_id on create_case — this is
+    # the regression test for a real bug found during Step 4: the LLM
+    # supplied its own made-up thread_id, which silently broke
+    # Case.thread_id's link to the actual LangGraph conversation. Fixed
+    # by binding it via closure, same as organization_id.
+    create_case_tool = next(t for t in result.tools if t.name == "create_case")
+    assert "thread_id" not in create_case_tool.inputSchema.get("properties", {})
+
 
 async def test_call_tool_get_transaction_round_trips_real_data(client, db_session, unique_email):
     org_id = _register_org(client, unique_email)
@@ -91,7 +99,7 @@ async def test_call_tool_get_transaction_round_trips_real_data(client, db_sessio
     db_session.add(txn)
     db_session.flush()
 
-    server = build_mcp_server(db_session, org_id)
+    server = build_mcp_server(db_session, org_id, str(uuid.uuid4()))
     async with create_connected_server_and_client_session(server._mcp_server) as session:
         result = await session.call_tool("get_transaction", {"transaction_id": str(txn.id)})
 
@@ -120,7 +128,7 @@ async def test_call_tool_run_fraud_model_flags_structuring_over_mcp(client, db_s
         )
     db_session.flush()
 
-    server = build_mcp_server(db_session, org_id)
+    server = build_mcp_server(db_session, org_id, str(uuid.uuid4()))
     async with create_connected_server_and_client_session(server._mcp_server) as session:
         result = await session.call_tool("run_fraud_model", {"account_id": str(account.id)})
 
@@ -132,18 +140,19 @@ async def test_call_tool_create_and_update_case_over_mcp(client, db_session, uni
     org_id = _register_org(client, unique_email)
     account = _make_account(db_session, org_id)
 
-    server = build_mcp_server(db_session, org_id)
+    bound_thread_id = str(uuid.uuid4())
+    server = build_mcp_server(db_session, org_id, bound_thread_id)
     async with create_connected_server_and_client_session(server._mcp_server) as session:
         create_result = await session.call_tool(
             "create_case",
-            {
-                "account_id": str(account.id),
-                "title": "MCP-created case",
-                "thread_id": str(uuid.uuid4()),
-            },
+            {"account_id": str(account.id), "title": "MCP-created case"},
         )
         case = json.loads(create_result.content[0].text)
         assert case["status"] == "open"
+        # thread_id came from the server's closure, not an LLM-supplied
+        # argument — this is the regression test for the exact bug found
+        # during Step 4: the model can't invent its own thread_id.
+        assert case["thread_id"] == bound_thread_id
 
         update_result = await session.call_tool(
             "update_case",
