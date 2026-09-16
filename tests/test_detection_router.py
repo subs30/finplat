@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from fastapi import HTTPException, status
 
-import app.routers.detection as detection_router
+import app.detection.combined as detection_combined
 from app.models.account import Account, AccountStatus, AccountType
 from app.models.entity import Entity, EntityType, KycStatus, RiskRating
 from app.models.transaction import Transaction, TransactionType
@@ -107,7 +107,7 @@ def test_detection_reports_ml_unavailable_when_model_not_trained(
     def _raise_not_found():
         raise FileNotFoundError("no model")
 
-    monkeypatch.setattr(detection_router, "load_model", _raise_not_found)
+    monkeypatch.setattr(detection_combined, "load_model", _raise_not_found)
     headers, user = _register(client, unique_email)
     account = _make_structuring_account(db_session, uuid.UUID(user["organization_id"]))
 
@@ -127,7 +127,7 @@ def test_detection_reports_graph_unavailable_when_neo4j_not_configured(
     def _raise_503():
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="not configured")
 
-    monkeypatch.setattr(detection_router, "get_neo4j_driver", _raise_503)
+    monkeypatch.setattr(detection_combined, "get_neo4j_driver", _raise_503)
     headers, user = _register(client, unique_email)
     account = _make_structuring_account(db_session, uuid.UUID(user["organization_id"]))
 
