@@ -1,5 +1,6 @@
 import asyncio
 
+from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import BaseMessage, SystemMessage
 from langchain_core.tools import BaseTool
 from langchain_openai.chat_models.base import OpenAIInvalidRequestError
@@ -85,6 +86,7 @@ def build_graph(
     checkpointer: BaseCheckpointSaver,
     *,
     interrupt_after: list[str] | None = None,
+    llm: BaseChatModel | None = None,
 ) -> CompiledStateGraph:
     """Assembles the investigation graph — a StateGraph, not the
     create_react_agent prebuilt helper, so InvestigationState's extra
@@ -104,8 +106,18 @@ def build_graph(
     `["tools"]`, to stop right after the first tool call) to verify
     checkpoint resume without depending on real LLM call timing to
     "catch" a run mid-flight. See tests/test_agent_checkpoint.py.
+
+    `llm` is injectable for the same reason: tests that verify graph
+    *mechanics* (does interrupt/resume genuinely persist state, does
+    ToolNode route correctly) don't need real model reasoning, only a
+    scripted sequence of responses — see
+    langchain_core.language_models.fake_chat_models.FakeMessagesListChatModel
+    and tests/test_agent_checkpoint.py. Defaults to the real
+    Groq-backed model (get_agent_llm()) when not supplied, which is what
+    every real investigation and the model-behavior tests in
+    tests/test_investigations_router.py use.
     """
-    llm_with_tools = get_agent_llm().bind_tools(tools)
+    llm_with_tools = (llm or get_agent_llm()).bind_tools(tools)
 
     async def agent_node(state: InvestigationState) -> dict:
         messages = state["messages"]

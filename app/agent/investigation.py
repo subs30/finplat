@@ -2,6 +2,7 @@ import json
 import uuid
 from dataclasses import dataclass, field
 
+from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
 from langchain_mcp_adapters.tools import load_mcp_tools
@@ -91,6 +92,7 @@ async def run_investigation(
     thread_id: str | None = None,
     max_steps: int = DEFAULT_MAX_STEPS,
     interrupt_after: list[str] | None = None,
+    llm: BaseChatModel | None = None,
 ) -> InvestigationResult:
     """Runs (or resumes) one investigation.
 
@@ -116,7 +118,7 @@ async def run_investigation(
     async with create_connected_server_and_client_session(server._mcp_server) as session:
         tools = await load_mcp_tools(session)
         async with get_checkpointer() as checkpointer:
-            graph = build_graph(tools, checkpointer, interrupt_after=interrupt_after)
+            graph = build_graph(tools, checkpointer, interrupt_after=interrupt_after, llm=llm)
             config: RunnableConfig = {
                 "configurable": {"thread_id": resolved_thread_id},
                 "recursion_limit": max_steps * 2 + 2,
