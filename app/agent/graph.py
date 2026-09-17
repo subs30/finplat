@@ -1,5 +1,8 @@
-from langchain_core.messages import SystemMessage
+import asyncio
+
+from langchain_core.messages import BaseMessage, SystemMessage
 from langchain_core.tools import BaseTool
+from langchain_openai.chat_models.base import OpenAIInvalidRequestError
 from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.graph import END, StateGraph
 from langgraph.graph.state import CompiledStateGraph
@@ -7,6 +10,40 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 from app.agent.llm import get_agent_llm
 from app.agent.state import InvestigationState
+
+_TOOL_USE_FAILED_MAX_RETRIES = 3
+_TOOL_USE_FAILED_BACKOFF_SECONDS = 1.0
+
+
+def _is_transient_tool_use_glitch(exc: Exception) -> bool:
+    """Same class of Groq quirk app.gateway.providers.groq already has a
+    retry for, hit for real by this agent (not hypothetically — see the
+    V0.4 report): the model occasionally emits a native tool call whose
+    arguments don't parse as valid JSON (observed cause: an unescaped
+    quote inside a generated string value). Groq's API rejects that
+    response with a 400 whose `code` is "tool_use_failed" — a sampling
+    glitch, not a bad request, and the identical call typically succeeds
+    on a fresh sample. langchain_openai has no knowledge of this
+    Groq-specific behavior (its own retry logic doesn't retry 4xx at
+    all), so this has to be handled here, at the same layer GroqProvider
+    handles it for the non-agent gateway path.
+    """
+    return isinstance(exc, OpenAIInvalidRequestError) and exc.code == "tool_use_failed"
+
+
+async def _ainvoke_with_tool_use_retry(llm_with_tools, messages: list[BaseMessage]) -> BaseMessage:
+    last_exc: Exception | None = None
+    for attempt in range(_TOOL_USE_FAILED_MAX_RETRIES + 1):
+        try:
+            return await llm_with_tools.ainvoke(messages)
+        except Exception as exc:
+            if not _is_transient_tool_use_glitch(exc):
+                raise
+            last_exc = exc
+            if attempt < _TOOL_USE_FAILED_MAX_RETRIES:
+                await asyncio.sleep(_TOOL_USE_FAILED_BACKOFF_SECONDS * (2**attempt))
+    assert last_exc is not None
+    raise last_exc
 
 SYSTEM_PROMPT = """You are a financial crime investigation assistant for a \
 bank's compliance team. You have been asked to investigate one account. \
@@ -74,7 +111,7 @@ def build_graph(
         messages = state["messages"]
         if not messages or not isinstance(messages[0], SystemMessage):
             messages = [SystemMessage(content=SYSTEM_PROMPT), *messages]
-        response = await llm_with_tools.ainvoke(messages)
+        response = await _ainvoke_with_tool_use_retry(llm_with_tools, messages)
         return {"messages": [response]}
 
     graph = StateGraph(InvestigationState)
