@@ -108,14 +108,16 @@ def build_mcp_server(db: Session, organization_id: uuid.UUID, thread_id: str) ->
     def update_case(case_id: str, findings_summary: str | None = None, status: str | None = None) -> dict:
         return tools.update_case(db, organization_id, case_id, findings_summary=findings_summary, status=status)
 
-    @server.tool(
-        description=(
-            "STUB: record that a case is awaiting human approval for a proposed "
-            "action. Does not actually notify anyone or block on a real decision "
-            "— the real human-in-the-loop workflow is a later stage."
-        )
-    )
-    def request_human_approval(case_id: str, action_description: str) -> dict:
-        return tools.request_human_approval(db, organization_id, case_id, action_description)
+    # request_human_approval is deliberately NOT registered here — see
+    # app/agent/approval_tool.py for why. LangGraph's interrupt()
+    # (verified empirically in the V0.5 design report) cannot suspend
+    # across the MCP request/response boundary, even over this in-memory
+    # transport: LangGraph tracks "am I inside a Pregel task" via a
+    # contextvar that does not propagate into FastMCP's own dispatch task,
+    # so interrupt() called from an MCP tool handler just raises a plain
+    # error instead of pausing the graph. request_human_approval is built
+    # as a native LangChain tool instead and added to the tools list
+    # alongside this server's MCP-derived ones (see
+    # app/agent/investigation.py).
 
     return server

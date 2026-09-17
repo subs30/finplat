@@ -1,5 +1,6 @@
 from app.models.account import Account, AccountStatus, AccountType
 from app.models.case import Case, CaseStatus
+from app.models.case_approval import CaseApproval, CaseApprovalStatus
 from app.models.document import Document, DocumentStatus, DocumentType
 from app.models.document_chunk import DocumentChunk
 from app.models.entity import Entity, EntityType, KycStatus, RiskRating
@@ -13,6 +14,8 @@ __all__ = [
     "AccountStatus",
     "AccountType",
     "Case",
+    "CaseApproval",
+    "CaseApprovalStatus",
     "CaseStatus",
     "Document",
     "DocumentChunk",

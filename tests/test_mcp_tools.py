@@ -8,7 +8,6 @@ from app.mcp.tools import (
     get_customer_history,
     get_transaction,
     query_relationship_graph,
-    request_human_approval,
     run_fraud_model,
     search_typology,
     update_case,
@@ -258,10 +257,15 @@ def test_query_relationship_graph_shows_direct_neighbors(
     assert result["in_mule_community"] is None
 
 
-# --- create_case / update_case / request_human_approval -------------------------
+# --- create_case / update_case ---------------------------------------------------
+# request_human_approval moved out of app.mcp.tools in V0.5 — it's now a native
+# LangChain tool (app.agent.approval_tool) so it can genuinely call LangGraph's
+# interrupt(), which an MCP tool handler structurally cannot do. See
+# tests/test_agent_checkpoint.py and tests/test_approvals_router.py for its
+# coverage.
 
 
-def test_create_case_then_update_then_request_approval(client, db_session, unique_email):
+def test_create_case_then_update(client, db_session, unique_email):
     org_id, user_id = _register_org(client, unique_email)
     account = _make_account(db_session, org_id, "Case Tool Subject")
 
@@ -285,13 +289,6 @@ def test_create_case_then_update_then_request_approval(client, db_session, uniqu
     )
     assert updated["status"] == "in_review"
     assert updated["findings_summary"] == "Confirmed structuring across 3 deposits."
-
-    approval = request_human_approval(
-        db_session, org_id, created["case_id"], "Recommend freezing account pending compliance review."
-    )
-    assert approval["status"] == "in_review"
-    assert approval["pending_approval_action"] == "Recommend freezing account pending compliance review."
-    assert "stub" in approval["note"].lower()
 
 
 def test_update_case_returns_error_for_missing_case(client, db_session, unique_email):

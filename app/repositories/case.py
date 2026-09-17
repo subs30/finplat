@@ -54,3 +54,12 @@ class CaseRepository(TenantScopedRepository[Case]):
         case.status = CaseStatus.IN_REVIEW
         self.db.flush()
         return case
+
+    def clear_pending_approval(self, case: Case) -> Case:
+        # Deliberately leaves case.status untouched: the agent's own
+        # subsequent update_case call decides the case's real final state
+        # (per SYSTEM_PROMPT, which requires a real tool call to match any
+        # claimed status) — this just clears the now-resolved request.
+        case.pending_approval_action = None
+        self.db.flush()
+        return case

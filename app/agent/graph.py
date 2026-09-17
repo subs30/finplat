@@ -69,7 +69,12 @@ what the outcome is without also making it true via a tool call:
 - If you believe a specific action is warranted (e.g. freezing the \
 account, escalating to a human reviewer), call request_human_approval \
 with a clear description of the recommended action. This also moves the \
-case to in_review — you do not need a separate update_case call for that.
+case to in_review — you do not need a separate update_case call for that. \
+It returns the reviewer's actual decision, not an acknowledgement — wait \
+for that result before saying what happened. If approved, reflect that in \
+your final message. If rejected, call update_case to close the case with \
+a findings summary noting the recommended action was rejected — never \
+report the escalated action as taken when it was rejected.
 - If you conclude the account shows no signs of financial crime and no \
 action is needed, call update_case with status="closed" and a findings \
 summary. Do not describe the case as closed, resolved, or requiring no \

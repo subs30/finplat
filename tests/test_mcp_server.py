@@ -43,7 +43,7 @@ def _make_account(db_session, organization_id: uuid.UUID) -> Account:
     return account
 
 
-async def test_list_tools_exposes_all_eight_tools_with_no_organization_id_parameter(
+async def test_list_tools_exposes_all_seven_mcp_tools_with_no_organization_id_parameter(
     client, db_session, unique_email
 ):
     org_id = _register_org(client, unique_email)
@@ -52,6 +52,11 @@ async def test_list_tools_exposes_all_eight_tools_with_no_organization_id_parame
     async with create_connected_server_and_client_session(server._mcp_server) as session:
         result = await session.list_tools()
 
+    # request_human_approval is deliberately NOT here — as of V0.5 it's a
+    # native LangChain tool bound alongside these MCP ones (see
+    # app/agent/approval_tool.py and app/agent/investigation.py), not
+    # served by this MCP server at all: LangGraph's interrupt() cannot
+    # suspend across the MCP request/response boundary.
     tool_names = {t.name for t in result.tools}
     assert tool_names == {
         "get_transaction",
@@ -61,7 +66,6 @@ async def test_list_tools_exposes_all_eight_tools_with_no_organization_id_parame
         "query_relationship_graph",
         "create_case",
         "update_case",
-        "request_human_approval",
     }
 
     # The load-bearing tenant-isolation property: organization_id must

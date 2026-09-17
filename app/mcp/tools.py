@@ -291,30 +291,3 @@ def update_case(
         "status": case.status.value,
         "findings_summary": case.findings_summary,
     }
-
-
-def request_human_approval(
-    db: Session, organization_id: uuid.UUID, case_id: str, action_description: str
-) -> dict:
-    """Stub, per the V0.4 design: records a pending-approval state only.
-    The real human-in-the-loop mechanics (a decision record, an
-    approve/reject endpoint, notification) are V0.5's job.
-    """
-    c_id = _parse_uuid(case_id)
-    if c_id is None:
-        return {"error": f"'{case_id}' is not a valid case id"}
-
-    case_repo = CaseRepository(db, organization_id)
-    case = case_repo.get(c_id)
-    if case is None:
-        return {"error": f"Case {case_id} not found"}
-
-    case_repo.set_pending_approval(case, action_description)
-    db.commit()
-
-    return {
-        "case_id": str(case.id),
-        "status": case.status.value,
-        "pending_approval_action": case.pending_approval_action,
-        "note": "This is a stub — no human has actually been notified. Real approval mechanics are V0.5.",
-    }
