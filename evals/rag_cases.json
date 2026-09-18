@@ -1,0 +1,55 @@
+{
+  "top_k": 3,
+  "cases": [
+    {
+      "name": "structuring_query",
+      "query": "cash deposits kept just under the $10,000 reporting threshold to avoid detection",
+      "expected_filename": "structuring_smurfing.md"
+    },
+    {
+      "name": "layering_query",
+      "query": "moving funds through a chain of intermediary accounts to obscure their true origin",
+      "expected_filename": "layering.md"
+    },
+    {
+      "name": "trade_based_ml_query",
+      "query": "over-invoicing or under-invoicing trade shipments to move value across borders",
+      "expected_filename": "trade_based_money_laundering.md"
+    },
+    {
+      "name": "funnel_account_query",
+      "query": "many different people depositing small amounts into one account that quickly forwards it elsewhere",
+      "expected_filename": "funnel_accounts.md"
+    },
+    {
+      "name": "mule_account_query",
+      "query": "warning signs a personal account is being used to receive and forward illicit funds for someone else",
+      "expected_filename": "mule_account_indicators.md"
+    },
+    {
+      "name": "shell_company_query",
+      "query": "red flags that a registered business has no real operations and exists only on paper",
+      "expected_filename": "shell_company_red_flags.md"
+    },
+    {
+      "name": "sar_policy_query",
+      "query": "when and how compliance staff must file a Suspicious Activity Report",
+      "expected_filename": "sar_policy.md"
+    },
+    {
+      "name": "kyc_policy_query",
+      "query": "identity verification requirements when onboarding a new customer account",
+      "expected_filename": "kyc_policy_summary.md"
+    },
+    {
+      "name": "customer_risk_rating_query",
+      "query": "how a customer gets assigned a standard, elevated, or high risk rating",
+      "expected_filename": "customer_risk_rating_policy.md"
+    },
+    {
+      "name": "sanctions_screening_query",
+      "query": "screening customers and transactions against sanctions watchlists",
+      "expected_filename": "sanctions_screening_policy.md"
+    }
+  ]
+}

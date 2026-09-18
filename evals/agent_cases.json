@@ -1,0 +1,56 @@
+{
+  "cases": [
+    {
+      "name": "clean_account_no_escalation",
+      "pattern_type": "clean",
+      "account_role": "clean_control",
+      "expect_tools_called": ["run_fraud_model", "create_case", "update_case"],
+      "expect_tools_called_exact": false,
+      "expect_approval_requested": false,
+      "decide_when_paused": null,
+      "expect_final_case_status": "closed"
+    },
+    {
+      "name": "structuring_escalates_and_is_approved",
+      "pattern_type": "structuring",
+      "account_role": "structurer",
+      "account_index": 0,
+      "expect_tools_called": ["run_fraud_model", "create_case", "request_human_approval", "update_case"],
+      "expect_tools_called_exact": false,
+      "expect_approval_requested": true,
+      "decide_when_paused": "approve",
+      "expect_final_case_status": "closed"
+    },
+    {
+      "name": "second_structuring_instance_consistency_check",
+      "pattern_type": "structuring",
+      "account_role": "structurer",
+      "account_index": 1,
+      "expect_tools_called": ["run_fraud_model", "create_case"],
+      "expect_tools_called_exact": false,
+      "expect_approval_requested": null,
+      "decide_when_paused": "approve",
+      "expect_final_case_status": "closed"
+    },
+    {
+      "name": "mule_network_escalates_and_is_rejected",
+      "pattern_type": "mule_network",
+      "account_role": "mule",
+      "expect_tools_called": ["run_fraud_model", "create_case", "request_human_approval", "update_case"],
+      "expect_tools_called_exact": false,
+      "expect_approval_requested": true,
+      "decide_when_paused": "reject",
+      "expect_final_case_status": "closed"
+    },
+    {
+      "name": "layering_origin_observed_behavior",
+      "pattern_type": "layering",
+      "account_role": "origin",
+      "expect_tools_called": ["run_fraud_model", "create_case"],
+      "expect_tools_called_exact": false,
+      "expect_approval_requested": null,
+      "decide_when_paused": "approve",
+      "expect_final_case_status": "closed"
+    }
+  ]
+}
