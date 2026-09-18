@@ -22,3 +22,9 @@ class InvestigationResponse(BaseModel):
     case_id: uuid.UUID | None
     final_message: str
     tool_calls: list[ToolCallSchema]
+    # True when the agent is genuinely paused inside request_human_approval
+    # (a real LangGraph interrupt(), not finished) — see
+    # app.agent.investigation and GET /approvals/pending /
+    # POST /approvals/{id}/decide, which is how it resumes.
+    awaiting_approval: bool = False
+    approval_id: uuid.UUID | None = None

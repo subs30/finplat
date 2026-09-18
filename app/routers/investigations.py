@@ -42,4 +42,6 @@ async def create_investigation(
         case_id=uuid.UUID(result.case_id) if result.case_id else None,
         final_message=result.final_message,
         tool_calls=[ToolCallSchema(tool=tc.tool, args=tc.args) for tc in result.tool_calls],
+        awaiting_approval=result.awaiting_approval,
+        approval_id=uuid.UUID(result.approval_id) if result.approval_id else None,
     )
