@@ -64,6 +64,9 @@ def test_ask_returns_answer_and_writes_trace(client, db_session, unique_email):
     assert trace.success is True
     assert trace.provider == "groq"
     assert str(trace.organization_id) == user["organization_id"]
+    # V0.7: distinguishes this from a /rag/ask trace, which is otherwise
+    # identical in shape (same provider/model) — see TraceFeature.
+    assert trace.feature == "ai_ask"
 
 
 def test_ask_with_failing_gateway_returns_502_and_still_traces_failure(client, db_session, unique_email):

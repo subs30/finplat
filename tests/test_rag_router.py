@@ -1,7 +1,10 @@
+import uuid
+
 from app.gateway.base import GatewayResponse
 from app.gateway.dependency import get_gateway
 from app.main import app
 from app.models.document_chunk import EMBEDDING_DIMENSION
+from app.models.trace import Trace
 from app.rag.dependency import get_embedding_provider
 
 
@@ -82,6 +85,13 @@ def test_rag_ask_returns_answer_and_citations(client, db_session, unique_email):
     assert body["citations"][0]["filename"] == "policy.txt"
     assert body["citations"][0]["doc_type"] == "policy"
     assert "trace_id" in body
+
+    # V0.7: distinguishes this from a plain /ai/ask trace, which is
+    # otherwise identical in shape (same provider/model) — see
+    # TraceFeature.
+    trace = db_session.get(Trace, uuid.UUID(body["trace_id"]))
+    assert trace is not None
+    assert trace.feature == "rag_ask"
 
 
 def test_rag_ask_with_no_documents_returns_empty_citations(client, unique_email):

@@ -130,6 +130,18 @@ def _summarize(text: str) -> str:
     return text[:_PROMPT_SUMMARY_LENGTH] + "…"
 
 
+def _error_detail(exc: BaseException) -> str:
+    """Unwraps nested ExceptionGroups — the MCP session's own task group
+    wraps any failure at least once, sometimes twice — down to the
+    innermost exception's own message. str(exc) on the outer group is
+    just "unhandled errors in a TaskGroup (1 sub-exception)", which tells
+    a reader of Trace.error nothing about the actual cause.
+    """
+    while isinstance(exc, BaseExceptionGroup) and exc.exceptions:
+        exc = exc.exceptions[0]
+    return f"{type(exc).__name__}: {exc}"
+
+
 def _llm_turns_with_usage(messages: list) -> list[AIMessage]:
     return [m for m in messages if isinstance(m, AIMessage) and m.usage_metadata is not None]
 
@@ -285,7 +297,7 @@ async def run_investigation(
             post_call_messages=pre_call_messages,
             latency_ms=int((time.monotonic() - started_at) * 1000),
             success=False,
-            error=str(exc),
+            error=_error_detail(exc),
         )
         raise
 
@@ -364,7 +376,7 @@ async def resume_investigation_with_decision(
             post_call_messages=pre_call_messages,
             latency_ms=int((time.monotonic() - started_at) * 1000),
             success=False,
-            error=str(exc),
+            error=_error_detail(exc),
         )
         raise
 

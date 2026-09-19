@@ -52,6 +52,7 @@ from app.models.case import Case
 from app.models.case_approval import CaseApproval
 from app.models.entity import Entity
 from app.models.organization import Organization
+from app.models.trace import Trace
 from app.models.transaction import Transaction
 from app.models.user import User, UserRole
 from app.repositories.case import CaseRepository
@@ -70,7 +71,14 @@ def _cleanup(db, organization_id: uuid.UUID) -> None:
     organization_id, and leaving a handful of finished/abandoned threads
     behind is the same accepted precedent as the pytest suite's own
     checkpoint tests (see the V0.5 report).
+
+    Trace deletion is a V0.7 addition: run_investigation() /
+    resume_investigation_with_decision() now write Trace rows (see
+    app/agent/investigation.py), which weren't accounted for here before
+    — without deleting them first, the Organization delete below would
+    fail its foreign key check.
     """
+    db.query(Trace).filter(Trace.organization_id == organization_id).delete(synchronize_session=False)
     db.query(CaseApproval).filter(CaseApproval.organization_id == organization_id).delete(
         synchronize_session=False
     )
