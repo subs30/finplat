@@ -1,6 +1,6 @@
 [project]
 name = "finplat"
-version = "0.4.0"
+version = "0.7.0"
 description = "AI Financial Crime Intelligence & Investigation Platform — backend foundation, RAG, rules/ML/graph fraud detection, and a LangGraph+MCP investigation agent with Postgres-backed checkpointing"
 requires-python = ">=3.11"
 dependencies = [

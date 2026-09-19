@@ -59,6 +59,13 @@ class Settings(BaseSettings):
     NEO4J_PASSWORD: str | None = None
     NEO4J_DATABASE: str = "neo4j"
 
+    # Illustrative only, same as aiplat's Step 10 precedent — a single flat
+    # rate applied to (input+output tokens)/1000, not real per-model
+    # pricing. Surfaced alongside every cost figure in the observability
+    # endpoints so the caveat travels with the number, not just a code
+    # comment.
+    ILLUSTRATIVE_COST_PER_1K_TOKENS_USD: float = 0.05
+
 
 @lru_cache
 def get_settings() -> Settings:

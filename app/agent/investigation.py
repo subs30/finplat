@@ -1,4 +1,5 @@
 import json
+import time
 import uuid
 from dataclasses import dataclass, field
 
@@ -13,11 +14,15 @@ from sqlalchemy.orm import Session
 from app.agent.approval_tool import build_request_human_approval_tool
 from app.agent.checkpointer import get_checkpointer
 from app.agent.graph import build_graph
+from app.config import get_settings
 from app.mcp.server import build_mcp_server
+from app.models.trace import TraceFeature
 from app.repositories.case import CaseRepository
 from app.repositories.case_approval import CaseApprovalRepository
+from app.repositories.trace import TraceRepository
 
 DEFAULT_MAX_STEPS = 10
+_PROMPT_SUMMARY_LENGTH = 200
 
 
 @dataclass
@@ -119,6 +124,74 @@ def _record_pending_approval(db: Session, organization_id: uuid.UUID, thread_id:
     return str(approval.id)
 
 
+def _summarize(text: str) -> str:
+    if len(text) <= _PROMPT_SUMMARY_LENGTH:
+        return text
+    return text[:_PROMPT_SUMMARY_LENGTH] + "…"
+
+
+def _llm_turns_with_usage(messages: list) -> list[AIMessage]:
+    return [m for m in messages if isinstance(m, AIMessage) and m.usage_metadata is not None]
+
+
+def _input_tokens(message: AIMessage) -> int:
+    assert message.usage_metadata is not None  # guaranteed by _llm_turns_with_usage's filter
+    return message.usage_metadata["input_tokens"]
+
+
+def _output_tokens(message: AIMessage) -> int:
+    assert message.usage_metadata is not None  # guaranteed by _llm_turns_with_usage's filter
+    return message.usage_metadata["output_tokens"]
+
+
+def _record_agent_trace(
+    db: Session,
+    organization_id: uuid.UUID,
+    thread_id: str,
+    *,
+    prompt_summary: str,
+    pre_call_messages: list,
+    post_call_messages: list,
+    latency_ms: int,
+    success: bool,
+    error: str | None = None,
+) -> None:
+    """One Trace row per call to run_investigation() / resume_investigation_with_decision()
+    — not one per internal agent LLM turn, the same "one call is the
+    atomic unit" treatment app.gateway already gives a single
+    generate() call even though that may retry internally. Token usage
+    is summed across whichever AIMessages with usage_metadata are new in
+    `post_call_messages` relative to `pre_call_messages` (comparing
+    counts, not identity) — a resumed run's message list is a strict,
+    prefix-preserving superset of the pre-pause one (see V0.5's
+    checkpoint tests), so this never double-counts a turn an earlier
+    call on the same thread_id already traced.
+
+    latency_ms is this call's own wall-clock time — never the wait
+    between a pause and its human-approval resume, since that gap
+    happens *between* two separate calls (and therefore two separate
+    trace rows), not inside either one. See the V0.7 design report.
+    """
+    already_seen = len(_llm_turns_with_usage(pre_call_messages))
+    new_turns = _llm_turns_with_usage(post_call_messages)[already_seen:]
+    input_tokens = sum(_input_tokens(t) for t in new_turns) if new_turns else None
+    output_tokens = sum(_output_tokens(t) for t in new_turns) if new_turns else None
+
+    TraceRepository(db, organization_id).create(
+        provider="groq",
+        model=get_settings().GROQ_MODEL,
+        prompt_summary=_summarize(prompt_summary),
+        success=success,
+        error=error,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        latency_ms=latency_ms,
+        feature=TraceFeature.INVESTIGATION_AGENT.value,
+        thread_id=thread_id,
+    )
+    db.commit()
+
+
 def _build_result(
     thread_id: str, account_id: str, result_state: dict, *, approval_id: str | None
 ) -> InvestigationResult:
@@ -165,38 +238,67 @@ async def run_investigation(
     resolved_thread_id = thread_id or str(uuid.uuid4())
     server = build_mcp_server(db, organization_id, resolved_thread_id)
 
-    async with create_connected_server_and_client_session(server._mcp_server) as session:
-        mcp_tools = await load_mcp_tools(session)
-        # request_human_approval is a native tool, not MCP-derived — see
-        # app/agent/approval_tool.py — but the LLM sees it as just another
-        # entry in this same list, bound alongside the MCP tools below.
-        tools = [*mcp_tools, build_request_human_approval_tool(db, organization_id)]
-        async with get_checkpointer() as checkpointer:
-            graph = build_graph(tools, checkpointer, interrupt_after=interrupt_after, llm=llm)
-            config: RunnableConfig = {
-                "configurable": {"thread_id": resolved_thread_id},
-                "recursion_limit": max_steps * 2 + 2,
-            }
-
-            existing_state = await graph.aget_state(config)
-            if existing_state.values.get("messages"):
-                result_state = await graph.ainvoke(None, config)
-            else:
-                initial_state = {
-                    "messages": [
-                        HumanMessage(
-                            content=(
-                                f"Investigate account {account_id} in organization "
-                                f"{organization_id}. Determine whether it shows signs of "
-                                "financial crime, and open a case with your conclusion."
-                            )
-                        )
-                    ],
-                    "organization_id": str(organization_id),
-                    "account_id": str(account_id),
-                    "case_id": None,
+    pre_call_messages: list = []
+    started_at = time.monotonic()
+    try:
+        async with create_connected_server_and_client_session(server._mcp_server) as session:
+            mcp_tools = await load_mcp_tools(session)
+            # request_human_approval is a native tool, not MCP-derived —
+            # see app/agent/approval_tool.py — but the LLM sees it as just
+            # another entry in this same list, bound alongside the MCP
+            # tools below.
+            tools = [*mcp_tools, build_request_human_approval_tool(db, organization_id)]
+            async with get_checkpointer() as checkpointer:
+                graph = build_graph(tools, checkpointer, interrupt_after=interrupt_after, llm=llm)
+                config: RunnableConfig = {
+                    "configurable": {"thread_id": resolved_thread_id},
+                    "recursion_limit": max_steps * 2 + 2,
                 }
-                result_state = await graph.ainvoke(initial_state, config)
+
+                existing_state = await graph.aget_state(config)
+                pre_call_messages = existing_state.values.get("messages", [])
+                if pre_call_messages:
+                    result_state = await graph.ainvoke(None, config)
+                else:
+                    initial_state = {
+                        "messages": [
+                            HumanMessage(
+                                content=(
+                                    f"Investigate account {account_id} in organization "
+                                    f"{organization_id}. Determine whether it shows signs of "
+                                    "financial crime, and open a case with your conclusion."
+                                )
+                            )
+                        ],
+                        "organization_id": str(organization_id),
+                        "account_id": str(account_id),
+                        "case_id": None,
+                    }
+                    result_state = await graph.ainvoke(initial_state, config)
+    except Exception as exc:
+        _record_agent_trace(
+            db,
+            organization_id,
+            resolved_thread_id,
+            prompt_summary=f"investigate account {account_id}",
+            pre_call_messages=pre_call_messages,
+            post_call_messages=pre_call_messages,
+            latency_ms=int((time.monotonic() - started_at) * 1000),
+            success=False,
+            error=str(exc),
+        )
+        raise
+
+    _record_agent_trace(
+        db,
+        organization_id,
+        resolved_thread_id,
+        prompt_summary=f"investigate account {account_id}",
+        pre_call_messages=pre_call_messages,
+        post_call_messages=result_state["messages"],
+        latency_ms=int((time.monotonic() - started_at) * 1000),
+        success=True,
+    )
 
     approval_id = None
     interrupt_payload = _extract_interrupt_payload(result_state)
@@ -236,16 +338,46 @@ async def resume_investigation_with_decision(
     assert case is not None  # the decide endpoint already resolved this via the approval row
 
     server = build_mcp_server(db, organization_id, thread_id)
-    async with create_connected_server_and_client_session(server._mcp_server) as session:
-        mcp_tools = await load_mcp_tools(session)
-        tools = [*mcp_tools, build_request_human_approval_tool(db, organization_id)]
-        async with get_checkpointer() as checkpointer:
-            graph = build_graph(tools, checkpointer, llm=llm)
-            config: RunnableConfig = {
-                "configurable": {"thread_id": thread_id},
-                "recursion_limit": max_steps * 2 + 2,
-            }
-            result_state = await graph.ainvoke(Command(resume=decision), config)
+
+    pre_call_messages: list = []
+    started_at = time.monotonic()
+    try:
+        async with create_connected_server_and_client_session(server._mcp_server) as session:
+            mcp_tools = await load_mcp_tools(session)
+            tools = [*mcp_tools, build_request_human_approval_tool(db, organization_id)]
+            async with get_checkpointer() as checkpointer:
+                graph = build_graph(tools, checkpointer, llm=llm)
+                config: RunnableConfig = {
+                    "configurable": {"thread_id": thread_id},
+                    "recursion_limit": max_steps * 2 + 2,
+                }
+                existing_state = await graph.aget_state(config)
+                pre_call_messages = existing_state.values.get("messages", [])
+                result_state = await graph.ainvoke(Command(resume=decision), config)
+    except Exception as exc:
+        _record_agent_trace(
+            db,
+            organization_id,
+            thread_id,
+            prompt_summary=f"resume investigation decision={decision.get('approved')}",
+            pre_call_messages=pre_call_messages,
+            post_call_messages=pre_call_messages,
+            latency_ms=int((time.monotonic() - started_at) * 1000),
+            success=False,
+            error=str(exc),
+        )
+        raise
+
+    _record_agent_trace(
+        db,
+        organization_id,
+        thread_id,
+        prompt_summary=f"resume investigation decision={decision.get('approved')}",
+        pre_call_messages=pre_call_messages,
+        post_call_messages=result_state["messages"],
+        latency_ms=int((time.monotonic() - started_at) * 1000),
+        success=True,
+    )
 
     approval_id = None
     interrupt_payload = _extract_interrupt_payload(result_state)

@@ -7,6 +7,7 @@ from app.dependencies import get_current_user, validate_body_before_gateway
 from app.gateway.base import GatewayResponse, ModelProvider
 from app.gateway.dependency import get_gateway
 from app.models.document_chunk import DocumentChunk
+from app.models.trace import TraceFeature
 from app.models.user import User
 from app.rag.dependency import get_embedding_provider
 from app.rag.embeddings import EmbeddingProvider
@@ -88,6 +89,7 @@ def rag_ask(
         input_tokens=result.input_tokens,
         output_tokens=result.output_tokens,
         latency_ms=result.latency_ms,
+        feature=TraceFeature.RAG_ASK.value,
     )
     db.commit()
 
